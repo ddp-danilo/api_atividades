@@ -5,6 +5,7 @@ from models import Pessoas, Atividades
 app = Flask(__name__)
 api = Api(app)
 
+
 class Pessoa(Resource):
     def get(self, nome):
         pessoa = Pessoas.query.filter_by(nome=nome).first()
@@ -31,6 +32,7 @@ class Pessoa(Resource):
         mensagem = 'Pessoa {} excluída com sucesso.'.format(nome)
         return {'status':'Sucesso', 'mensagem': mensagem}
 
+# exibe e adiciona pessoas.
 class ListaPessoas(Resource):
     def get(self):
         pessoas = Pessoas.query.all()
@@ -43,10 +45,11 @@ class ListaPessoas(Resource):
         response = {'id': pessoa.id, 'nome': pessoa.nome, 'idade': pessoa.idade}
         return response
 
+# Exibe e adiciona novas Atividades.
 class ListaAtividades(Resource):
     def get(self):
         atividades = Atividades.query.all()
-        response = [{'id': i.id, 'pessoa': i.pessoa.nome, 'nome': i.nome} for i in atividades]
+        response = [{'id': i.id, 'pessoa': i.pessoa.nome, 'nome': i.nome, 'id_pessoa': i.pessoa_id} for i in atividades]
         return response
 
     def post(self):
@@ -57,7 +60,16 @@ class ListaAtividades(Resource):
         response = {'nome': atividade.nome, 'pessoa':atividade.pessoa.nome, 'id':atividade.id}
         return response
 
+# Lista as atividades de uma pessoa. Fixme as mensagens de erro.
+class Atividade(Resource):
+    def get(self, nome):
+        pessoa = Pessoas.query.filter_by(nome=nome).first()
+        print(pessoa.id, '1')
+        atividades = Atividades.query.filter_by(pessoa_id=pessoa.id)
+        response = [{'id': i.id, 'nome': i.nome, 'pessoa': pessoa.nome}for i in atividades]
+        return response
 
+api.add_resource(Atividade, '/atividades/<string:nome>')
 api.add_resource(ListaAtividades, '/atividades')
 api.add_resource(ListaPessoas, '/listapessoas')
 api.add_resource(Pessoa, '/pessoa/<string:nome>')
