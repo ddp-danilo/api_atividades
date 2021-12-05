@@ -33,11 +33,32 @@ def lista_pessoas():
     pessoas = Pessoas.query.all()
     print([{'id': i.id, 'nome': i.nome, 'idade': i.idade } for i in pessoas])
 
+# remove todos os itens da tabela atividades #Use com cuidado
+def limpa_atividades():
+    conf_msg = 'Sim eu quero apagar todos os itens da tabela atividades'
+    print('Isso vai remover todos os itens da tabela atividades.')
+    print('se e isso  que você quer digite({})'.format(conf_msg))
+    ipt = input(':')
+    if ipt == conf_msg:
+        tam = len(Atividades.query.all())
+        for i in range(tam):
+            print(lista_atividades())
+            atividade = Atividades.query.filter_by(id=(i + 1)).first()
+            print(atividade)
+            atividade.delete()
+        print(lista_atividades())
+    else:
+        tam = len(Atividades.query.all())
+        print('Cancelado', tam)
+
+            
+
 
 if __name__=='__main__':
     #insere_pessoas()
     #exclui_pessoa()
     #consulta_pessoas()
     #altera_pessoa()
+    #limpa_atividades()
     #lista_atividades()
     #lista_pessoas()
